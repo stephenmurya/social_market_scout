@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "Abuja Market Indexer",
+    "version": "1.0",
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "storage",
+        "unlimitedStorage"
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://web.whatsapp.com/*",
+                "https://www.facebook.com/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}

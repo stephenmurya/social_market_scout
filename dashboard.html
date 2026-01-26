@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Abuja Market Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <aside>
+        <div>
+            <h2>Filters</h2>
+
+            <label>Category</label>
+            <select id="filterCategory">
+                <option value="">All</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Item">Items</option>
+            </select>
+
+            <label>Location</label>
+            <input type="text" id="filterLocation" placeholder="e.g. Gwarinpa">
+
+            <label>Max Price</label>
+            <input type="number" id="filterMaxPrice" placeholder="No Limit">
+
+            <label>Bedrooms</label>
+            <select id="filterBeds">
+                <option value="">Any</option>
+                <option value="1">1 Bedroom</option>
+                <option value="2">2 Bedrooms</option>
+                <option value="3">3 Bedrooms</option>
+                <option value="4">4+ Bedrooms</option>
+            </select>
+        </div>
+
+        <button id="resetBtn">Reset Filters</button>
+        <div id="stats" style="text-align: center; font-size: 12px; color: #888;"></div>
+    </aside>
+
+    <main>
+        <header>
+            <h1>Market Listings</h1>
+            <button id="refreshBtn">Refresh Data</button>
+        </header>
+
+        <div id="listingsContainer">
+        </div>
+    </main>
+
+    <script type="module" src="dashboard.js"></script>
+</body>
+
+</html>
