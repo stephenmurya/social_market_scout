@@ -5,6 +5,7 @@ import db from './db.js';
 // API key will be loaded from chrome.storage.local
 let OPENROUTER_API_KEY = null;
 let isExtensionEnabled = false;
+let SELECTED_MODEL = "arcee-ai/trinity-large-preview:free"; // Default
 
 // ============================================================================
 // CONFIGURATION
@@ -30,11 +31,16 @@ async function loadSettingsFromStorage() {
             'minDelayMs',
             'maxRetryAttempts',
             'rateLimitBackoffMs',
-            'maxQueueSize'
+            'maxQueueSize',
+            'selectedModel'
         ]);
 
         OPENROUTER_API_KEY = storage.apiKey || null;
         isExtensionEnabled = storage.extensionEnabled || false;
+
+        if (storage.selectedModel) {
+            SELECTED_MODEL = storage.selectedModel;
+        }
 
         // Update processing config if values exist in storage
         if (storage.minDelayMs) PROCESSING_CONFIG.MIN_DELAY_MS = storage.minDelayMs;
@@ -45,8 +51,8 @@ async function loadSettingsFromStorage() {
         console.log('⚙️ Settings loaded:', {
             hasApiKey: !!OPENROUTER_API_KEY,
             enabled: isExtensionEnabled,
-            minDelay: PROCESSING_CONFIG.MIN_DELAY_MS,
-            maxRetries: PROCESSING_CONFIG.MAX_RETRY_ATTEMPTS
+            model: SELECTED_MODEL,
+            minDelay: PROCESSING_CONFIG.MIN_DELAY_MS
         });
     } catch (error) {
         console.error('❌ Failed to load settings:', error);
@@ -64,6 +70,10 @@ chrome.storage.onChanged.addListener((changes, area) => {
         }
         if (changes.extensionEnabled) {
             isExtensionEnabled = changes.extensionEnabled.newValue;
+        }
+        if (changes.selectedModel) {
+            SELECTED_MODEL = changes.selectedModel.newValue;
+            console.log('🤖 Model updated:', SELECTED_MODEL);
         }
 
         // Update processing config on the fly
@@ -208,8 +218,8 @@ async function processWithAI(item) {
         }
 
         const requestBody = {
-            // Using a stable, free model from OpenRouter
-            "model": "arcee-ai/trinity-large-preview:free",
+            // Using the user-selected model
+            "model": SELECTED_MODEL,
             "messages": [
                 {
                     "role": "system",

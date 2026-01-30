@@ -22,6 +22,10 @@ let headerTitle, headerVersion;
 // Input fields for processing settings
 let minDelayInput, maxRetriesInput, backoffDelayInput, maxQueueInput;
 
+// Model Selection Elements
+let modelSelect, modelCategory, refreshModels, modelInfo;
+let fetchedModels = [];
+
 // ============================================================================
 // INITIALIZATION
 // ============================================================================
@@ -63,6 +67,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     backoffDelayInput = document.getElementById('backoffDelayInput');
     maxQueueInput = document.getElementById('maxQueueInput');
 
+    // Model Selection Elements
+    modelSelect = document.getElementById('modelSelect');
+    modelCategory = document.getElementById('modelCategory');
+    refreshModels = document.getElementById('refreshModels');
+    modelInfo = document.getElementById('modelInfo');
+    minDelayInput = document.getElementById('minDelayInput');
+    maxRetriesInput = document.getElementById('maxRetriesInput');
+    backoffDelayInput = document.getElementById('backoffDelayInput');
+    maxQueueInput = document.getElementById('maxQueueInput');
+
     console.log('📋 DOM elements loaded');
 
     await loadState();
@@ -85,7 +99,8 @@ async function loadState() {
             'minDelayMs',
             'maxRetryAttempts',
             'rateLimitBackoffMs',
-            'maxQueueSize'
+            'maxQueueSize',
+            'selectedModel'
         ]);
 
         hasApiKey = Boolean(storage.apiKey);
@@ -95,7 +110,13 @@ async function loadState() {
         updatePowerButton();
 
         // Load values into inputs (fallback to CONFIG if not in storage)
-        if (hasApiKey) apiKeyInput.value = storage.apiKey;
+        if (hasApiKey) {
+            apiKeyInput.value = storage.apiKey;
+            // Fetch models if we have a key
+            await fetchModels(storage.apiKey, storage.selectedModel);
+        } else {
+            modelSelect.innerHTML = '<option value="">Enter API Key first</option>';
+        }
 
         minDelayInput.value = storage.minDelayMs || CONFIG.PROCESSING.MIN_DELAY_MS;
         maxRetriesInput.value = storage.maxRetryAttempts !== undefined ? storage.maxRetryAttempts : CONFIG.PROCESSING.MAX_RETRY_ATTEMPTS;
@@ -186,10 +207,33 @@ function setupEventListeners() {
     // Settings Form
     settingsForm.addEventListener('submit', handleSaveSettings);
 
+    // Model Category Filter
+    modelCategory.addEventListener('change', () => renderModelOptions(modelSelect.value));
+
+    // Refresh Models
+    refreshModels.addEventListener('click', () => {
+        const apiKey = apiKeyInput.value.trim();
+        if (apiKey.startsWith('sk-or-v1-')) {
+            fetchModels(apiKey, modelSelect.value);
+        } else {
+            alert('Please enter a valid API key first');
+        }
+    });
+
     // Toggle password visibility
     toggleVisibility.addEventListener('click', () => {
         const type = apiKeyInput.type === 'password' ? 'text' : 'password';
         apiKeyInput.type = type;
+    });
+
+    // Model Select change handler
+    modelSelect.addEventListener('change', () => {
+        const selected = fetchedModels.find(m => m.id === modelSelect.value);
+        if (selected) {
+            const pricing = selected.pricing || {};
+            const isFree = parseFloat(pricing.prompt) === 0;
+            modelInfo.textContent = isFree ? '✅ Free model selected' : '💰 Paid model selected';
+        }
     });
 }
 
@@ -224,6 +268,7 @@ async function handleSaveSettings(e) {
     const maxRetries = parseInt(maxRetriesInput.value);
     const backoffDelay = parseInt(backoffDelayInput.value);
     const maxQueue = parseInt(maxQueueInput.value);
+    const selectedModel = modelSelect.value;
 
     // Validate API key format
     if (!apiKey.startsWith('sk-or-v1-')) {
@@ -242,7 +287,8 @@ async function handleSaveSettings(e) {
             minDelayMs: minDelay,
             maxRetryAttempts: maxRetries,
             rateLimitBackoffMs: backoffDelay,
-            maxQueueSize: maxQueue
+            maxQueueSize: maxQueue,
+            selectedModel: selectedModel
         });
 
         hasApiKey = true;
@@ -265,6 +311,87 @@ async function handleSaveSettings(e) {
     } finally {
         saveButton.disabled = false;
         saveButton.textContent = 'Save Settings';
+    }
+}
+
+// ============================================================================
+// FETCH MODELS FROM OPENROUTER
+// ============================================================================
+
+async function fetchModels(apiKey, currentModel) {
+    if (!apiKey) return;
+
+    modelSelect.innerHTML = '<option value="">Loading models...</option>';
+    modelSelect.disabled = true;
+
+    try {
+        const response = await fetch('https://openrouter.ai/api/v1/models', {
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'HTTP-Referer': 'https://localhost:3000',
+                'X-Title': CONFIG.APP_NAME
+            }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch models');
+
+        const data = await response.json();
+        fetchedModels = data.data || [];
+
+        renderModelOptions(currentModel);
+    } catch (error) {
+        console.error('Error fetching models:', error);
+        modelSelect.innerHTML = '<option value="">Failed to load models</option>';
+        modelInfo.textContent = '⚠️ Could not fetch model list';
+    } finally {
+        modelSelect.disabled = false;
+    }
+}
+
+function renderModelOptions(currentModel) {
+    const category = modelCategory.value;
+
+    // Filter models
+    let filtered = fetchedModels;
+    if (category === 'free') {
+        filtered = fetchedModels.filter(m => {
+            const pricing = m.pricing || {};
+            return parseFloat(pricing.prompt) === 0 && parseFloat(pricing.completion) === 0;
+        });
+    } else if (category === 'paid') {
+        filtered = fetchedModels.filter(m => {
+            const pricing = m.pricing || {};
+            return parseFloat(pricing.prompt) > 0 || parseFloat(pricing.completion) > 0;
+        });
+    }
+
+    // Sort by name
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+    if (filtered.length === 0) {
+        modelSelect.innerHTML = '<option value="">No models found</option>';
+        return;
+    }
+
+    modelSelect.innerHTML = filtered.map(m => `
+        <option value="${m.id}" ${m.id === currentModel ? 'selected' : ''}>
+            ${m.name} (${m.id.split('/')[0]})
+        </option>
+    `).join('');
+
+    // RANDOM FREE MODEL LOGIC
+    // If no model is selected and we have free models, pick a random one as default
+    if (!modelSelect.value && category === 'free' && filtered.length > 0) {
+        const randomIndex = Math.floor(Math.random() * filtered.length);
+        modelSelect.value = filtered[randomIndex].id;
+        modelInfo.textContent = '🎲 Random free model selected by default';
+    } else if (modelSelect.value) {
+        const selected = filtered.find(m => m.id === modelSelect.value);
+        if (selected) {
+            const pricing = selected.pricing || {};
+            const isFree = parseFloat(pricing.prompt) === 0;
+            modelInfo.textContent = isFree ? '✅ Free model selected' : '💰 Paid model selected';
+        }
     }
 }
 

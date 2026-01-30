@@ -112,6 +112,39 @@
                         </div>
                     </div>
 
+                    <!-- AI Model Selection -->
+                    <div class="settings-divider">
+                        <span>AI Model Configuration</span>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="model-controls">
+                            <div class="filter-wrapper">
+                                <label for="modelCategory">Type</label>
+                                <select id="modelCategory">
+                                    <option value="all">All Models</option>
+                                    <option value="free" selected>Free Models</option>
+                                    <option value="paid">Paid Models</option>
+                                </select>
+                            </div>
+                            <div class="refresh-wrapper">
+                                <button type="button" id="refreshModels" class="btn-icon" title="Refresh list">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path
+                                            d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <label for="modelSelect">AI Model</label>
+                        <select id="modelSelect" required>
+                            <option value="">Loading models...</option>
+                        </select>
+                        <small id="modelInfo" class="help-text">Select a model for message classification</small>
+                    </div>
+
                     <!-- Processing Settings -->
                     <div class="settings-divider">
                         <span>Processing Parameters</span>
