@@ -1,8 +1,20 @@
 # Social Market Scout v4.1.0
 
-## 🚀 What's New in v4.0
+## 🆕 New in v4.1 (Current Version)
 
-### Critical Fixes Implemented
+### ✨ Redesigned Popup UI
+- **Modern Aesthetic**: 12px rounded corners, glassmorphism elements, and a clean typography system matching the dashboard.
+- **Power Toggle**: Prominent, color-coded central button to quickly enable (Active) or disable (Inactive) the extension.
+- **Dynamic Branding**: The app name and version are now centrally managed and consistent across all views.
+
+### ⚙️ UI-Based Configuration
+- **Settings Screen**: No more editing `config.js` for basic setup. Configure everything from the extension's settings page.
+- **Secure API Storage**: OpenRouter API keys are now stored securely in `chrome.storage.local` instead of plain text files.
+- **Tuning Parameters**: Expose technical settings (Min Delay, Max Retries, Queue Size, Backoff) to the UI with safe-range validation.
+
+---
+
+## 🚀 Highlights from v4.0
 
 1. **✅ Duplicate Processing Prevention**
    - In-flight message tracking prevents race conditions
@@ -61,18 +73,18 @@
 ### Fresh Installation
 
 1. **Clone/Download Files**
-   - Place all files in a folder (e.g., `abuja-market-indexer`)
+   - Place all files in a folder (e.g., `whatscanner`)
 
-2. **Update Configuration**
-   - Open `config.js`
-   - Replace `YOUR_API_KEY_HERE` with your OpenRouter API key
-
-3. **Load Extension**
-   - Open Chrome
-   - Navigate to `chrome://extensions/`
+2. **Load Extension**
+   - Open Chrome and navigate to `chrome://extensions/`
    - Enable "Developer mode" (top right)
-   - Click "Load unpacked"
-   - Select your folder
+   - Click "Load unpacked" and select your folder
+
+3. **Configure API Key**
+   - Click the extension icon in your browser toolbar
+   - Click the **Settings** button
+   - Enter your **OpenRouter API Key** and hit **Save Settings**
+   - Use the central **Power Toggle** to activate the extension
 
 ### Upgrading from v3 to v4
 
@@ -98,9 +110,11 @@
 
 4. **Reload Extension**
    - Go to `chrome://extensions/`
-   - Find "Abuja Market Indexer"
+   - Find "**Social Market Scout**"
    - Click the refresh icon 🔄
-   - Or disable and re-enable the extension
+
+5. **Re-enter Settings**
+   - Open the new settings UI in the popup and re-enter your API key (now stored separately from `config.js`).
 
 5. **Verify Migration**
    - Open WhatsApp Web
@@ -179,7 +193,19 @@
 
 ## 🔧 Configuration Options
 
-### `config.js` Settings
+### 🖥️ Extension Settings (UI)
+The following parameters are now configurable directly via the **Settings** page in the extension popup:
+
+| Parameter | Default | Safe Range | Description |
+| :--- | :--- | :--- | :--- |
+| **API Key** | - | `sk-or-v1-...` | Your OpenRouter authorization key |
+| **Min Delay** | 1000ms | 100ms - 10s | Minimum wait time between API requests |
+| **Max Retries** | 3 | 0 - 10 | Times to retry a failed message |
+| **Backoff** | 5000ms | 1s - 60s | Wait time after hitting a rate limit |
+| **Max Queue** | 500 | 10 - 2000 | Pending message limit |
+
+### 📄 `config.js` (Advanced)
+Keywords and platform selectors remain in the `config.js` file for advanced customization:
 
 ```javascript
 PROCESSING: {
@@ -268,7 +294,7 @@ hash, raw_text, started_at, platform
 
 2. **Verify console logs**
    - Press F12 → Console tab
-   - Should see: "🚀 Social Market Scout v4.0 - ACTIVE"
+   - Should see: "🚀 Social Market Scout v4.1 - COST OPTIMIZED"
    - If not, reload the page
 
 3. **Check keyword matching**
