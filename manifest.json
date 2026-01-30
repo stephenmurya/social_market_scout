@@ -1,13 +1,16 @@
 {
     "manifest_version": 3,
-    "name": "Abuja Market Indexer",
-    "version": "1.0.0",
+    "name": "Social Market Scout",
+    "version": "4.1.0",
     "action": {
         "default_popup": "popup.html"
     },
     "permissions": [
         "storage",
         "unlimitedStorage"
+    ],
+    "host_permissions": [
+        "https://openrouter.ai/*"
     ],
     "background": {
         "service_worker": "background.js",

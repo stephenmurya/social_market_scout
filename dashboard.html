@@ -3,53 +3,75 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Abuja Market Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Market Scout</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-
-    <aside>
-        <div>
-            <h2>Filters</h2>
-
-            <label>Category</label>
-            <select id="filterCategory">
-                <option value="">All</option>
-                <option value="Real Estate">Real Estate</option>
-                <option value="Item">Items</option>
-            </select>
-
-            <label>Location</label>
-            <input type="text" id="filterLocation" placeholder="e.g. Gwarinpa">
-
-            <label>Max Price</label>
-            <input type="number" id="filterMaxPrice" placeholder="No Limit">
-
-            <label>Bedrooms</label>
-            <select id="filterBeds">
-                <option value="">Any</option>
-                <option value="1">1 Bedroom</option>
-                <option value="2">2 Bedrooms</option>
-                <option value="3">3 Bedrooms</option>
-                <option value="4">4+ Bedrooms</option>
-            </select>
+    <nav class="navbar">
+        <div class="nav-brand">Social Market Scout</div>
+        <div class="nav-actions">
+            <button id="refreshBtn" class="icon-btn" title="Refresh Data">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 4v6h-6"></path>
+                    <path d="M1 20v-6h6"></path>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                <span>Refresh</span>
+            </button>
+            <div class="divider"></div>
+            <button id="themeToggle" class="icon-btn" title="Toggle Theme">
+                <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
         </div>
-
-        <button id="resetBtn">Reset Filters</button>
-        <div id="stats" style="text-align: center; font-size: 12px; color: #888;"></div>
-    </aside>
-
-    <main>
-        <header>
-            <h1>Market Listings</h1>
-            <button id="refreshBtn">Refresh Data</button>
-        </header>
-
-        <div id="listingsContainer">
-        </div>
-    </main>
-
+    </nav>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="filter-group">
+                <label>Category</label>
+                <select id="filterCategory">
+                    <option value="">All Categories</option>
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Vehicles">Vehicles</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Services">Services</option>
+                    <option value="Other Items">Other Items</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Max Price (₦)</label>
+                <input type="number" id="filterMaxPrice" placeholder="e.g. 5,000,000">
+            </div>
+            <div class="filter-group">
+                <label>Location</label>
+                <input type="text" id="filterLocation" placeholder="Search location...">
+            </div>
+            <div class="filter-group">
+                <label>Type / Bedrooms</label>
+                <select id="filterBeds">
+                    <option value="">Any</option>
+                    <option value="self_con">Self Contain / Studio</option>
+                    <option value="1">1 Bedroom / Mini Flat</option>
+                    <option value="2">2 Bedrooms</option>
+                    <option value="3">3 Bedrooms</option>
+                    <option value="4">4+ Bedrooms</option>
+                </select>
+            </div>
+            <div class="sidebar-footer">
+                <button id="resetBtn" class="btn-secondary">Reset Filters</button>
+                <small id="stats" class="stats-text">Loading...</small>
+            </div>
+        </aside>
+        <main>
+            <div id="listingsContainer" class="grid-container">
+            </div>
+        </main>
+    </div>
     <script type="module" src="dashboard.js"></script>
 </body>
 

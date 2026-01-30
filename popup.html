@@ -1,32 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <style>
-        body {
-            width: 250px;
-            padding: 20px;
-            font-family: sans-serif;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #2563EB;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Market Scout</title>
+    <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
-    <h2 style="margin-top:0">Market Tracker</h2>
-    <button id="openDash">View All Listings</button>
+    <div class="main-wrapper">
+        <!-- Main View -->
+        <div id="mainView" class="view active">
+            <div class="header">
+                <h1>Social Market Scout</h1>
+                <span class="version">v4.1</span>
+            </div>
 
-    <script src="popup.js"></script>
+            <div class="main-view">
+                <!-- Power Toggle -->
+                <button id="powerToggle" class="power-toggle disabled">
+                    <svg class="power-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                    </svg>
+                    <span class="status-text">Inactive</span>
+                </button>
+
+                <!-- Stats Card -->
+                <div class="stats-card">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="listingsCount">0</span>
+                            <span class="stat-label">Listings</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="todayCount">0</span>
+                            <span class="stat-label">Today</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <button id="openDashboard" class="btn btn-primary">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    View All Listings
+                </button>
+
+                <button id="openSettings" class="btn btn-secondary">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path
+                            d="M12 1v6m0 6v6m5.196-15.464l-4.242 4.242m-5.908 5.908l-4.242 4.242m15.464-5.196l-4.242-4.242m-5.908-5.908l-4.242-4.242">
+                        </path>
+                    </svg>
+                    Settings
+                </button>
+            </div>
+        </div>
+
+        <!-- Settings View -->
+        <div id="settingsView" class="view">
+            <div class="header">
+                <button id="backButton" class="back-button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <h1>Settings</h1>
+            </div>
+
+            <div class="settings-view">
+                <!-- Success Message -->
+                <div id="successMessage" class="success-message">
+                    ✓ API key saved successfully!
+                </div>
+
+                <!-- Instructions -->
+                <div class="info-box">
+                    <strong>Get Your OpenRouter API Key:</strong><br>
+                    Visit <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a> to generate your
+                    free
+                    API key.
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ Important:</strong> Add at least <strong>$5 credit</strong> to your OpenRouter account to
+                    avoid rate limiting and ensure smooth operation.
+                </div>
+
+                <!-- API Key Form -->
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label for="apiKeyInput">OpenRouter API Key</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..."
+                                pattern="sk-or-v1-[a-zA-Z0-9]{64}" required>
+                            <button type="button" id="toggleVisibility" class="toggle-visibility">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Processing Settings -->
+                    <div class="settings-divider">
+                        <span>Processing Parameters</span>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="form-group">
+                            <label for="minDelayInput">Min Delay (ms)</label>
+                            <input type="number" id="minDelayInput" min="100" max="10000" step="100" placeholder="1000">
+                            <small class="help-text">Delay between API calls</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="maxRetriesInput">Max Retries</label>
+                            <input type="number" id="maxRetriesInput" min="0" max="10" placeholder="3">
+                            <small class="help-text">Attempts on failure</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="backoffDelayInput">Backoff (ms)</label>
+                            <input type="number" id="backoffDelayInput" min="1000" max="60000" step="1000"
+                                placeholder="5000">
+                            <small class="help-text">Wait after rate limit</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="maxQueueInput">Max Queue</label>
+                            <input type="number" id="maxQueueInput" min="10" max="2000" placeholder="500">
+                            <small class="help-text">Pending messages cap</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="saveButton">
+                        Save Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="popup.js"></script>
 </body>
 
 </html>
