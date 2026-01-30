@@ -3,7 +3,6 @@
 ## 🆕 New in v4.1 (Current Version)
 
 ### ✨ Redesigned Popup UI
-- **Modern Aesthetic**: 12px rounded corners, glassmorphism elements, and a clean typography system matching the dashboard.
 - **Power Toggle**: Prominent, color-coded central button to quickly enable (Active) or disable (Inactive) the extension.
 - **Dynamic Branding**: The app name and version are now centrally managed and consistent across all views.
 
