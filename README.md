@@ -11,6 +11,12 @@
 - **Secure API Storage**: OpenRouter API keys are now stored securely in `chrome.storage.local` instead of plain text files.
 - **Tuning Parameters**: Expose technical settings (Min Delay, Max Retries, Queue Size, Backoff) to the UI with safe-range validation.
 
+### 🤖 Dynamic Model Selection
+- **Real-time Model Fetching**: Pulls the latest available models directly from OpenRouter.
+- **Pricing Filters**: Toggle between "Free", "Paid", or "All" models to control costs.
+- **Smart Defaults**: If no model is chosen, the extension automatically picks a random stable free model to get you started.
+- **Seamless Sync**: Switching models in the UI immediately updates the background processing logic.
+
 ---
 
 ## 🚀 Highlights from v4.0
@@ -198,6 +204,7 @@ The following parameters are now configurable directly via the **Settings** page
 | Parameter | Default | Safe Range | Description |
 | :--- | :--- | :--- | :--- |
 | **API Key** | - | `sk-or-v1-...` | Your OpenRouter authorization key |
+| **AI Model** | (Random Free) | Dropdown Select | The model used for classification |
 | **Min Delay** | 1000ms | 100ms - 10s | Minimum wait time between API requests |
 | **Max Retries** | 3 | 0 - 10 | Times to retry a failed message |
 | **Backoff** | 5000ms | 1s - 60s | Wait time after hitting a rate limit |
